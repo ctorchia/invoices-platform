@@ -17,7 +17,7 @@ export default async function Login() {
     const session = await auth();
 
     if (session?.user) {
-        redirect("/dashboard");
+        redirect("/dashboard"); 
     }
   return (
     <>
@@ -44,8 +44,7 @@ export default async function Login() {
                   placeholder="hello@hello.com"
                 />
               </div>
-              <SubmitButton />
-              {/* <Button>Submit</Button> */}
+              <SubmitButton text="login"/>
             </form>
           </CardContent>
         </Card>

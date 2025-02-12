@@ -1,13 +1,41 @@
-import { Sheet, SheetTrigger } from "@/components/ui/sheet";
+import {
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Menu, User2 } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 import { Button } from "@/components/ui/button";
 import { DashboardLinks } from "../components/DashboardLinks";
+import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
 import Image from "next/image";
 import Link from "next/link";
 import Logo from "@/public/logo.png";
-import { Menu } from "lucide-react";
 import { ReactNode } from "react";
+import prisma from "../utils/db";
+import { redirect } from "next/navigation";
 import { requireUser } from "../utils/hooks";
+import { signOut } from "../utils/auth";
+
+async function getUser(userId: string) {
+  const data = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      firstName: true,
+      lastName: true,
+      address: true,
+    },
+  });
+
+  if (!data?.firstName || !data.lastName || !data.address){
+    redirect("/onboarding")
+  } 
+}
 
 export default async function DashboardLayout({
   children,
@@ -15,6 +43,7 @@ export default async function DashboardLayout({
   children: ReactNode;
 }) {
   const session = await requireUser();
+  const data = await getUser(session.user?.id as string);
   return (
     <>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -43,8 +72,51 @@ export default async function DashboardLayout({
                   <Menu className="size-5" />
                 </Button>
               </SheetTrigger>
+              <SheetContent side="left">
+                <nav className="grid gap-2 mt-10">
+                  <DashboardLinks />
+                </nav>
+              </SheetContent>
             </Sheet>
+            <div className="flex items-center ml-auto">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    className="rounded-full"
+                    variant="outline"
+                    size="icon"
+                  >
+                    <User2 />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard">Dashboard</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard/invoices">Invoices</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <form
+                      className="w-full"
+                      action={async () => {
+                        "use server";
+                        await signOut();
+                      }}
+                    >
+                      <button className="w-full text-left">Log out</button>
+                    </form>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </header>
+          <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+            {children}
+          </main>
         </div>
       </div>
     </>
