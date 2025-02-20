@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useActionState, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,9 +23,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SubmitButton } from "./SubmitButtons";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { createInvoice } from "../actions";
 
 export function CreateInvoice() {
+  const[lastResult, action] = useActionState(createInvoice, undefined);
+
   const [selectedDate, setSelectedDate] = useState(new Date());
   return (
     <Card className="w-full max-w-4xl mx-auto">
