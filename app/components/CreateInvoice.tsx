@@ -67,12 +67,25 @@ export function CreateInvoice() {
                 <span className="px-3 border border-r-0 rounded-l-md bg-muted flex items-center">
                   #
                 </span>
-                <Input className="rounded-l-none" placeholder="5" />
+                <Input
+                  name={fields.invoiceNumber.name}
+                  key={fields.invoiceNumber.key}
+                  defaultValue={fields.invoiceNumber.initialValue}
+                  className="rounded-l-none"
+                  placeholder="5"
+                />
               </div>
+              <p className="text-red-500 text-sm">
+                {fields.invoiceNumber.errors}
+              </p>
             </div>
             <div>
               <Label>Currency</Label>
-              <Select defaultValue="USD">
+              <Select
+                defaultValue="USD"
+                name={fields.currency.name}
+                key={fields.currency.key}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Currency" />
                 </SelectTrigger>
@@ -83,6 +96,7 @@ export function CreateInvoice() {
                   <SelectItem value="EUR">Euro -- EUR</SelectItem>
                 </SelectContent>
               </Select>
+              <p className="text-red-500 text-sm">{fields.currency.errors}</p>
             </div>
           </div>
           <div className="grid md:grid-cols-2 gap-6 mb-6">
