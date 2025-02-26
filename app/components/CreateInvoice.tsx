@@ -43,10 +43,22 @@ export function CreateInvoice() {
   });
 
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [rate, setRate] = useState("");
+  const [quantity, setQuantity] = useState("");
+
+  const calculateTotal = (Number(quantity) || 0) * (Number(rate) || 0);
+
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardContent className="p-6">
         <form id={form.id} action={action} onSubmit={form.onSubmit} noValidate>
+          <input
+            type="hidden"
+            name={fields.date.name}
+            value={selectedDate.toISOString()}
+          />
+          <p className="text-sm text-red-500">{fields.date.errors}</p>
+
           <div className="flex flex-col gap-1 w-fit mb-6">
             <div className="flex items-center gap-4">
               <Badge variant="secondary">Draft</Badge>
@@ -103,17 +115,60 @@ export function CreateInvoice() {
             <div>
               <Label>From:</Label>
               <div className="space-y-2">
-                <Input placeholder="Your Name" />
-                <Input placeholder="Your Email" />
-                <Input placeholder="Your Address" />
+                <Input
+                  name={fields.fromName.name}
+                  key={fields.fromName.key}
+                  placeholder="Your Name"
+                />
+                <p className="text-red-500 text-sm">{fields.fromName.errors}</p>
+                <Input
+                  name={fields.fromEmail.name}
+                  key={fields.fromEmail.key}
+                  placeholder="Your Email"
+                />
+                <p className="text-red-500 text-sm">
+                  {fields.fromEmail.errors}
+                </p>
+                <Input
+                  name={fields.fromAddress.name}
+                  key={fields.fromAddress.key}
+                  placeholder="Your Address"
+                />
+                <p className="text-red-500 text-sm">
+                  {fields.fromAddress.errors}
+                </p>
               </div>
             </div>
             <div>
               <Label>To:</Label>
               <div className="space-y-2">
-                <Input placeholder="Client Name" />
-                <Input placeholder="Client Email" />
-                <Input placeholder="Client Address" />
+                <Input
+                  name={fields.clientName.name}
+                  key={fields.clientName.key}
+                  defaultValue={fields.clientName.initialValue}
+                  placeholder="Client Name"
+                />
+                <p className="text-red-500 text-sm">
+                  {fields.clientName.errors}
+                </p>
+                <Input
+                  name={fields.clientEmail.name}
+                  key={fields.clientEmail.key}
+                  defaultValue={fields.clientEmail.initialValue}
+                  placeholder="Client Email"
+                />
+                <p className="text-red-500 text-sm">
+                  {fields.clientEmail.errors}
+                </p>
+                <Input
+                  name={fields.clientAddress.name}
+                  key={fields.clientAddress.key}
+                  defaultValue={fields.clientAddress.initialValue}
+                  placeholder="Client Address"
+                />
+                <p className="text-red-500 text-sm">
+                  {fields.clientAddress.errors}
+                </p>
               </div>
             </div>
           </div>
@@ -151,7 +206,11 @@ export function CreateInvoice() {
             </div>
             <div>
               <Label>Invoice Due:</Label>
-              <Select>
+              <Select
+                name={fields.dueDate.name}
+                key={fields.dueDate.key}
+                defaultValue={fields.dueDate.initialValue}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Due Date" />
                 </SelectTrigger>
@@ -161,6 +220,7 @@ export function CreateInvoice() {
                   <SelectItem value="30">Net 30</SelectItem>
                 </SelectContent>
               </Select>
+              <p className="text-red-500 text-sm">{fields.dueDate.errors}</p>
             </div>
           </div>
 
@@ -173,16 +233,50 @@ export function CreateInvoice() {
             </div>
             <div className="grid grid-cols-12 gap-4 mb-4">
               <div className="col-span-6">
-                <Textarea placeholder="Item Name & Description" />
+                <Textarea
+                  name={fields.invoiceItemDescription.name}
+                  key={fields.invoiceItemDescription.key}
+                  defaultValue={fields.invoiceItemDescription.initialValue}
+                  placeholder="Item Name & Description"
+                />
+                <p className="text-red-500 text-sm">
+                  {fields.invoiceItemDescription.errors}
+                </p>
+              </div>
+
+              <div className="col-span-2">
+                <Input
+                  name={fields.invoiceItemQuantity.name}
+                  key={fields.invoiceItemQuantity.key}
+                  type="number"
+                  placeholder="0"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                />
+                <p className="text-red-500 text-sm">
+                  {fields.invoiceItemQuantity.errors}
+                </p>
               </div>
               <div className="col-span-2">
-                <Input type="number" placeholder="0" />
+                <Input
+                  name={fields.invoiceItemRate.name}
+                  key={fields.invoiceItemRate.key}
+                  value={rate}
+                  onChange={(e) => setRate(e.target.value)}
+                  type="number"
+                  placeholder="0"
+                />
+                <p className="text-red-500 text-sm">
+                  {fields.invoiceItemRate.errors}
+                </p>
               </div>
               <div className="col-span-2">
-                <Input type="number" placeholder="0" />
-              </div>
-              <div className="col-span-2">
-                <Input type="number" placeholder="0" disabled />
+                <Input
+                  value={calculateTotal}
+                  type="number"
+                  placeholder="0"
+                  disabled
+                />
               </div>
             </div>
           </div>
@@ -204,9 +298,14 @@ export function CreateInvoice() {
 
           <div>
             <Label>Note</Label>
-            <Textarea placeholder="Add your Note/s right here..." />
+            <Textarea
+              name={fields.note.name}
+              key={fields.note.key}
+              defaultValue={fields.note.initialValue}
+              placeholder="Add your Note/s right here..."
+            />
           </div>
-
+          <p className="text-red-500 text-sm">{fields.note.errors}</p>
           <div className="flex items-center justify-end mt-6">
             <div>
               <SubmitButton text="Send Invoice to Client" />
