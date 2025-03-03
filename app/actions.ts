@@ -2,6 +2,7 @@
 
 import { invoiceSchema, onboardingSchema } from "./utils/zodSchemas";
 
+import { emailClient } from "./utils/mailtrap";
 import { parseWithZod } from "@conform-to/zod"
 import prisma from "./utils/db";
 import { redirect } from "next/navigation";
@@ -64,6 +65,20 @@ export async function createInvoice(prevState: any, formData: FormData) {
             note: submission.value.note,
             userId: session.user?.id,
         }
+    });
+
+
+    const sender = {
+        email: "hello@demomailtrap.com",
+        name: "CMT",
+    }
+
+    emailClient.send({
+        from: sender,
+        to: [{ email: "cristian_torchia@yahoo.com.ar"}],
+        subject: "New invoice for you",
+        text: "Hola, tenemos una nueva factura para vos!",
+        category: "Invoice Test",
     })
 
     return redirect("/dashboard/invoices");
