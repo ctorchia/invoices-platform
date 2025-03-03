@@ -8,6 +8,28 @@ import {
 } from "@/components/ui/table";
 
 import { InvoiceActions } from "./InvoiceActions";
+import prisma from "../utils/db";
+
+async function getData(userId: string) {
+  const data = await prisma.invoice.findMany({
+    where: {
+      userId: userId,
+    },
+    select: {
+      id: true,
+      clientName: true,
+      total: true,
+      createdAt: true,
+      status: true,
+      invoiceNumber: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return data;
+}
 
 export function InvoiceList() {
   return (

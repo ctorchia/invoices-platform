@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import { SubmitButton } from "./SubmitButtons";
 import { Textarea } from "@/components/ui/textarea";
 import { createInvoice } from "../actions";
+import { formatCurrency } from "../utils/formatCurrency";
 import { invoiceSchema } from "../utils/zodSchemas";
 import { parseWithZod } from "@conform-to/zod";
 import { useForm } from "@conform-to/react";
@@ -45,6 +46,7 @@ export function CreateInvoice() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [rate, setRate] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [currency, setCurrency] = useState("USD");
 
   const calculateTotal = (Number(quantity) || 0) * (Number(rate) || 0);
 
@@ -56,6 +58,11 @@ export function CreateInvoice() {
             type="hidden"
             name={fields.date.name}
             value={selectedDate.toISOString()}
+          />
+          <input
+            type="hidden"
+            name={fields.total.name}
+            value={calculateTotal}
           />
           <p className="text-sm text-red-500">{fields.date.errors}</p>
 
@@ -97,6 +104,7 @@ export function CreateInvoice() {
                 defaultValue="USD"
                 name={fields.currency.name}
                 key={fields.currency.key}
+                onValueChange={(value) => setCurrency(value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Currency" />
@@ -272,9 +280,10 @@ export function CreateInvoice() {
               </div>
               <div className="col-span-2">
                 <Input
-                  value={calculateTotal}
-                  type="number"
-                  placeholder="0"
+                  value={formatCurrency({
+                    amount: calculateTotal,
+                    currency: currency as any,
+                  })}
                   disabled
                 />
               </div>
@@ -285,12 +294,20 @@ export function CreateInvoice() {
             <div className="w-1/3">
               <div className="flex justify-between py-2">
                 <span>Subtotal:</span>
-                <span>$5.00</span>
+                <span>
+                  {formatCurrency({
+                    amount: calculateTotal,
+                    currency: currency as any,
+                  })}
+                </span>
               </div>
               <div className="flex justify-between py-2 border-t">
-                <span>Total: (USD)</span>
+                <span>Total: ({currency})</span>
                 <span className="font-medium underline underline-offset-2">
-                  $5.00
+                  {formatCurrency({
+                    amount: calculateTotal,
+                    currency: currency as any,
+                  })}
                 </span>
               </div>
             </div>
