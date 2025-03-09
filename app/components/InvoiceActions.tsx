@@ -1,3 +1,5 @@
+"use client";
+
 import {
   CheckCircle,
   DownloadCloudIcon,
@@ -15,12 +17,12 @@ import {
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface iAppProps {
   id: string;
   status: string;
 }
-
 export function InvoiceActions({ id, status }: iAppProps) {
   const handleSendReminder = () => {
     toast.promise(
@@ -37,6 +39,7 @@ export function InvoiceActions({ id, status }: iAppProps) {
       }
     );
   };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -47,34 +50,29 @@ export function InvoiceActions({ id, status }: iAppProps) {
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
           <Link href={`/dashboard/invoices/${id}`}>
-            <Pencil className="size-4 mr-2" />
-            Edit Invoice
+            <Pencil className="size-4 mr-2" /> Edit Invoice
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href={`/api/invoice/${id}`} target="_blank">
-            <DownloadCloudIcon className="size-4 mr-2" />
-            Download Invoice
+            <DownloadCloudIcon className="size-4 mr-2" /> Download Invoice
           </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSendReminder}>
+          <Mail className="size-4 mr-2" /> Reminder Email
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="">
-            <Mail className="size-4 mr-2" />
-            Reminder Email
+          <Link href={`/dashboard/invoices/${id}/delete`}>
+            <Trash className="size-4 mr-2" /> Delete Invoice
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="">
-            <Trash className="size-4 mr-2" />
-            Delete Invoice
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="">
-            <CheckCircle className="size-4 mr-2" />
-            Mark as Paid
-          </Link>
-        </DropdownMenuItem>
+        {status !== "PAID" && (
+          <DropdownMenuItem asChild>
+            <Link href={`/dashboard/invoices/${id}/paid`}>
+              <CheckCircle className="size-4 mr-2" /> Mark as Paid
+            </Link>
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -15,6 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Logo from "@/public/logo.png";
 import { ReactNode } from "react";
+import { Toaster } from "@/components/ui/sonner";
 import prisma from "../utils/db";
 import { redirect } from "next/navigation";
 import { requireUser } from "../utils/hooks";
@@ -119,6 +120,7 @@ export default async function DashboardLayout({
           </main>
         </div>
       </div>
+      <Toaster richColors closeButton theme="light" />
     </>
   );
 }
